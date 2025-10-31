@@ -1,0 +1,21 @@
+# Files and directories to ignore when chezmoi adds files
+# This file should be in the chezmoi source directory
+
+# Cache directories
+.cache/
+*.swp
+*.swo
+*~
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Backup files
+*.bak
+*.backup
+

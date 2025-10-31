@@ -1,0 +1,12 @@
+# Git ignore for this repository
+# Note: This is for the repo itself, not for chezmoi's ignore rules
+
+# Personal notes or local config
+*.local
+notes.md
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+
