@@ -1,0 +1,9 @@
+# Ghostty Configuration
+# JetBrains Mono Nerd Font with Semi-Transparent Background
+
+# Font configuration
+font-family = JetBrainsMono Nerd Font
+font-size = 12
+
+# Semi-transparent background (85% opacity to match Alacritty)
+background-opacity = 0.85
