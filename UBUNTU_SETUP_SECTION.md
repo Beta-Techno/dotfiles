@@ -2,70 +2,47 @@
 
 ```bash
 #!/usr/bin/env bash
-# chezmoi-dotfiles-setup.sh — Install chezmoi and load dotfiles repository
-# Recommended placement: After System Foundation (section 1), before terminal tools
-
+# Dotfiles setup with chezmoi (idempotent)
+# Place after System Foundation and before terminal tooling
 set -euo pipefail
 
 log() { printf "\n\033[1;32m[%s]\033[0m %s\n" "$(date +%H:%M:%S)" "$*"; }
 warn() { printf "\n\033[1;33m[warn]\033[0m %s\n" "$*"; }
 
-# Configuration - Repository URL
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/Beta-Techno/dotfiles.git}"
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/Dev/infra/dotfiles}"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.local/share/chezmoi}"
 
-# Install chezmoi
-log "Installing chezmoi…"
+# Install chezmoi if missing (prefer local install, fall back to snap)
 if ! command -v chezmoi >/dev/null 2>&1; then
-  # Try official install script first
-  if sh -c "$(curl -fsLS get.chezmoi.io)" -- --version >/dev/null 2>&1; then
-    sh -c "$(curl -fsLS get.chezmoi.io)" || true
+  log "Installing chezmoi…"
+  if command -v curl >/dev/null 2>&1; then
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
     export PATH="$HOME/.local/bin:$PATH"
-  else
-    # Fallback to snap
-    sudo snap install chezmoi --classic || warn "Chezmoi installation failed"
+  fi
+  if ! command -v chezmoi >/dev/null 2>&1 && command -v snap >/dev/null 2>&1; then
+    sudo snap install chezmoi --classic
   fi
 fi
 
-# Ensure chezmoi is in PATH
-if ! command -v chezmoi >/dev/null 2>&1; then
-  export PATH="$HOME/.local/bin:$PATH"
-fi
+command -v chezmoi >/dev/null 2>&1 || { warn "chezmoi installation failed"; exit 1; }
 
-chezmoi --version | head -n1 || die "Chezmoi not found after installation"
-
-# Clone dotfiles repository
-log "Setting up dotfiles repository…"
+# Clone or update the dotfiles repository
+log "Syncing dotfiles repository…"
 mkdir -p "$(dirname "$DOTFILES_DIR")"
-
-if [[ -d "$DOTFILES_DIR/.git" ]]; then
-  log "Repository exists, pulling latest…"
+if [ -d "$DOTFILES_DIR/.git" ]; then
   git -C "$DOTFILES_DIR" fetch --all --tags
-  git -C "$DOTFILES_DIR" pull --ff-only || warn "Pull failed, continuing"
+  git -C "$DOTFILES_DIR" pull --ff-only || warn "git pull failed, continuing with local copy"
 else
-  log "Cloning dotfiles repository…"
   git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 fi
 
-# Initialize chezmoi with repository as source
-log "Initializing chezmoi with dotfiles…"
+# Initialize chezmoi using the cloned repository and apply
+log "Initializing chezmoi source → $DOTFILES_DIR"
 chezmoi init --source "$DOTFILES_DIR"
-
-# Apply all dotfiles
-log "Applying dotfiles to home directory…"
+log "Applying dotfiles…"
 chezmoi apply
 
-# Create tmux symlink if needed
-if [[ -f "$HOME/.config/tmux/tmux.conf" ]] && [[ ! -e "$HOME/.tmux.conf" ]]; then
-  log "Creating ~/.tmux.conf symlink…"
-  ln -sf "$HOME/.config/tmux/tmux.conf" "$HOME/.tmux.conf"
-fi
-
-# Verify
-log "Verifying setup…"
-chezmoi managed | head -n 5 || true
-
-echo "[OK] Dotfiles configured. Your terminal configs (Alacritty, Ghostty, tmux, Neovim) are ready."
+echo "[OK] Dotfiles configured. Review with: chezmoi status"
 ```
 
 **What this does:**

@@ -6,7 +6,8 @@ set -euo pipefail
 
 # Configuration - Repository URL (HTTPS for initial setup, SSH also available)
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/Beta-Techno/dotfiles.git}"
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/Dev/infra/dotfiles}"
+# Default to chezmoi's standard source dir; override with DOTFILES_DIR if desired
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.local/share/chezmoi}"
 
 log() { printf "\n\033[1;32m[%s]\033[0m %s\n" "$(date +%H:%M:%S)" "$*"; }
 warn() { printf "\n\033[1;33m[warn]\033[0m %s\n" "$*"; }
