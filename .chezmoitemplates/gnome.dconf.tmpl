@@ -1,3 +1,7 @@
+{{- define "dconf_list" -}}
+[{{- $comma := "" -}}{{- range . -}}{{ $comma }}'{{ . }}'{{- $comma = ", " -}}{{- end -}}]
+{{- end -}}
+
 {{- $gnome := dict -}}
 {{- if hasKey . "gnome" -}}
   {{- $gnome = index . "gnome" -}}
@@ -11,10 +15,6 @@
 {{- $wallpaperPath := default (printf "%s/.local/share/backgrounds/betta-purple.jpg" .chezmoi.homeDir) (index $gnome "wallpaper_path") -}}
 {{- $pictureURI := printf "file://%s" $wallpaperPath -}}
 {{- $monospaceFont := default "JetBrainsMono Nerd Font Medium 12" (index $gnome "monospace_font") -}}
-{{- define "dconf_list" -}}
-[{{- $comma := "" -}}{{- range . -}}{{ $comma }}'{{ . }}'{{- $comma = ", " -}}{{- end -}}]
-{{- end -}}
-
 [control-center]
 last-panel='multitasking'
 window-state=(980, 640, false)
