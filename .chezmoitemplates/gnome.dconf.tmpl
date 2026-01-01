@@ -1,4 +1,7 @@
-{{- $gnome := default (dict) .gnome -}}
+{{- $gnome := dict -}}
+{{- if hasKey . "gnome" -}}
+  {{- $gnome = index . "gnome" -}}
+{{- end -}}
 {{- $colorScheme := default "prefer-dark" (index $gnome "color_scheme") -}}
 {{- $gtkTheme := default "Yaru-purple-dark" (index $gnome "gtk_theme") -}}
 {{- $iconTheme := default "Yaru-purple" (index $gnome "icon_theme") -}}
