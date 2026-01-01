@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [ "{{ .chezmoi.os }}" != "linux" ]; then
+  exit 0
+fi
+if ! command -v dconf >/dev/null 2>&1; then
+  exit 0
+fi
+GNOME_CONF="$HOME/.config/dconf/gnome.conf"
+if [ ! -f "$GNOME_CONF" ]; then
+  exit 0
+fi
+# Only attempt to load when a graphical session is available
+if [ -z "${XDG_CURRENT_DESKTOP:-}" ]; then
+  exit 0
+fi
+if ! dconf load /org/gnome/ < "$GNOME_CONF"; then
+  echo "[chezmoi] warning: failed to apply GNOME settings" >&2
+fi

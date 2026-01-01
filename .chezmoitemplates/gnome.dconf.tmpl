@@ -1,0 +1,98 @@
+{{- $gnome := default (dict) .gnome -}}
+{{- $colorScheme := default "prefer-dark" (index $gnome "color_scheme") -}}
+{{- $gtkTheme := default "Yaru-purple-dark" (index $gnome "gtk_theme") -}}
+{{- $iconTheme := default "Yaru-purple" (index $gnome "icon_theme") -}}
+{{- $idleTimeout := default 900 (index $gnome "idle_timeout") -}}
+{{- $favoriteAppsDefault := list "org.gnome.Nautilus.desktop" "com.mitchellh.ghostty.desktop" "dev.zed.Zed.desktop" "cursor.desktop" "google-chrome.desktop" "com.discordapp.Discord.desktop" "bitwarden_bitwarden.desktop" "org.gnome.Settings.desktop" -}}
+{{- $favoriteApps := default $favoriteAppsDefault (index $gnome "favorite_apps") -}}
+{{- $wallpaperPath := default (printf "%s/.local/share/backgrounds/betta-purple.jpg" .chezmoi.homeDir) (index $gnome "wallpaper_path") -}}
+{{- $pictureURI := printf "file://%s" $wallpaperPath -}}
+{{- $monospaceFont := default "JetBrainsMono Nerd Font Medium 12" (index $gnome "monospace_font") -}}
+{{- define "dconf_list" -}}
+[{{- $comma := "" -}}{{- range . -}}{{ $comma }}'{{ . }}'{{- $comma = ", " -}}{{- end -}}]
+{{- end -}}
+
+[control-center]
+last-panel='multitasking'
+window-state=(980, 640, false)
+
+[desktop/app-folders]
+folder-children=['Utilities', 'YaST', 'Pardus']
+
+[desktop/app-folders/folders/Pardus]
+categories=['X-Pardus-Apps']
+name='X-Pardus-Apps.directory'
+translate=true
+
+[desktop/app-folders/folders/Utilities]
+apps=['gnome-abrt.desktop', 'gnome-system-log.desktop', 'nm-connection-editor.desktop', 'org.gnome.baobab.desktop', 'org.gnome.Connections.desktop', 'org.gnome.DejaDup.desktop', 'org.gnome.Dictionary.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Evince.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.fonts.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.Usage.desktop', 'vinagre.desktop']
+categories=['X-GNOME-Utilities']
+name='X-GNOME-Utilities.directory'
+translate=true
+
+[desktop/app-folders/folders/YaST]
+categories=['X-SuSE-YaST']
+name='suse-yast.directory'
+translate=true
+
+[desktop/background]
+picture-options='zoom'
+picture-uri='{{ $pictureURI }}'
+picture-uri-dark='{{ $pictureURI }}'
+primary-color='#2d1f3a'
+secondary-color='#2d1f3a'
+
+[desktop/input-sources]
+sources=[('xkb', 'us')]
+xkb-options=@as []
+
+[desktop/interface]
+color-scheme='{{ $colorScheme }}'
+gtk-theme='{{ $gtkTheme }}'
+icon-theme='{{ $iconTheme }}'
+monospace-font-name='{{ $monospaceFont }}'
+
+[desktop/notifications]
+application-children=['firefox-firefox', 'com-discordapp-discord', 'google-chrome']
+
+[desktop/notifications/application/com-discordapp-discord]
+application-id='com.discordapp.Discord.desktop'
+
+[desktop/notifications/application/firefox-firefox]
+application-id='firefox_firefox.desktop'
+
+[desktop/notifications/application/google-chrome]
+application-id='google-chrome.desktop'
+
+[evolution-data-server]
+migrated=true
+
+[mutter]
+edge-tiling=false
+
+[mutter/keybindings]
+toggle-tiled-left=@as []
+toggle-tiled-right=@as []
+
+[nautilus/preferences]
+migrated-gtk-settings=true
+
+[settings-daemon/plugins/power]
+sleep-inactive-ac-timeout={{ $idleTimeout }}
+sleep-inactive-ac-type='nothing'
+
+[shell]
+favorite-apps={{ template "dconf_list" $favoriteApps }}
+welcome-dialog-last-shown-version='46.0'
+
+[shell/extensions/ding]
+check-x11wayland=true
+
+[shell/extensions/tiling-assistant]
+active-window-hint-color='rgb(211,70,21)'
+last-version-installed=46
+overridden-settings={'org.gnome.mutter.edge-tiling': <@mb nothing>, 'org.gnome.mutter.keybindings.toggle-tiled-left': <@mb nothing>, 'org.gnome.mutter.keybindings.toggle-tiled-right': <@mb nothing>}
+tiling-popup-all-workspace=true
+
+[shell/world-clocks]
+locations=@av []

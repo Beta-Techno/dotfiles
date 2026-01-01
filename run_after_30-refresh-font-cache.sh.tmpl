@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [ "{{ .chezmoi.os }}" != "linux" ]; then
+  exit 0
+fi
+if ! command -v fc-cache >/dev/null 2>&1; then
+  exit 0
+fi
+if [ -d "$HOME/.local/share/fonts" ]; then
+  fc-cache -f "$HOME/.local/share/fonts" >/dev/null 2>&1 || true
+fi

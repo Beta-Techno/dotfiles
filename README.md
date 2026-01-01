@@ -109,6 +109,41 @@ chezmoi apply
 echo "[OK] Dotfiles configured. Review with: chezmoi status"
 ```
 
+## Theming, fonts, and GNOME preferences
+
+This repo ships the assets and GNOME profile that chezmoi expects:
+
+- `private_dot_local/share/backgrounds/betta-purple.jpg` — default wallpaper.
+- `private_dot_local/share/avatars/profile-default.png` — default avatar.
+- `private_dot_local/share/fonts/JetBrainsMono/` and `private_dot_local/share/fonts/BerkeleyMono/` — fonts installed into `~/.local/share/fonts/`.
+- `private_dot_config/dconf/gnome.conf.tmpl` — templated GNOME settings (color scheme, GTK/icons, idle timeout, favorites, wallpaper, etc.).
+
+`chezmoi apply` copies these assets, refreshes the font cache, and runs `dconf load /org/gnome/ < ~/.config/dconf/gnome.conf` automatically through the `run_after_*` scripts.
+
+Override GNOME defaults without editing the template by defining a `gnome` table in `~/.config/chezmoi/chezmoi.toml` (or via `chezmoi data`). Example:
+
+```toml
+[gnome]
+color_scheme = "prefer-dark"
+gtk_theme = "Yaru-purple-dark"
+icon_theme = "Yaru-purple"
+idle_timeout = 900          # seconds (15 minutes)
+monospace_font = "JetBrainsMono Nerd Font Medium 12"
+wallpaper_path = "{{ printf "%s/.local/share/backgrounds/betta-purple.jpg" .chezmoi.homeDir }}"
+favorite_apps = [
+  "org.gnome.Nautilus.desktop",
+  "com.mitchellh.ghostty.desktop",
+  "dev.zed.Zed.desktop",
+  "cursor.desktop",
+  "google-chrome.desktop",
+  "com.discordapp.Discord.desktop",
+  "bitwarden_bitwarden.desktop",
+  "org.gnome.Settings.desktop",
+]
+```
+
+Leave keys blank to keep the defaults baked into `gnome.dconf.tmpl`.
+
 ## Common Workflow
 
 ### Adding a new dotfile
