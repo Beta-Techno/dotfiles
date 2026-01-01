@@ -2,6 +2,14 @@
 [{{- $comma := "" -}}{{- range . -}}{{ $comma }}'{{ . }}'{{- $comma = ", " -}}{{- end -}}]
 {{- end -}}
 
+{{- define "render_list" -}}
+[{{- $comma := "" -}}{{- range . -}}{{ $comma }}{{ . }}{{- $comma = ", " -}}{{- end -}}]
+{{- end -}}
+
+{{- define "render_tuple_list" -}}
+[{{- $comma := "" -}}{{- range . -}}{{ $comma }}{{ . }}{{- $comma = ", " -}}{{- end -}}]
+{{- end -}}
+
 {{- $gnome := dict -}}
 {{- if hasKey . "gnome" -}}
   {{- $gnome = index . "gnome" -}}
