@@ -1,7 +1,3 @@
-{{- define "dconf_list" -}}
-[{{- $comma := "" -}}{{- range . -}}{{ $comma }}'{{ . }}'{{- $comma = ", " -}}{{- end -}}]
-{{- end -}}
-
 {{- define "render_list" -}}
 [{{- $comma := "" -}}{{- range . -}}{{ $comma }}{{ . }}{{- $comma = ", " -}}{{- end -}}]
 {{- end -}}
@@ -93,7 +89,7 @@ sleep-inactive-ac-timeout={{ $idleTimeout }}
 sleep-inactive-ac-type='nothing'
 
 [shell]
-favorite-apps={{ template "dconf_list" $favoriteApps }}
+favorite-apps=[{{- range $i, $app := $favoriteApps -}}{{- if gt $i 0 }}, {{- end -}}'{{ $app }}'{{- end -}}]
 welcome-dialog-last-shown-version='46.0'
 
 [shell/extensions/ding]
