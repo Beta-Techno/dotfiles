@@ -19,6 +19,12 @@ Thumbs.db
 *.bak
 *.backup
 
+# Repo helper scripts/docs (not meant for $HOME)
+setup-chezmoi.sh
+UBUNTU_SETUP_SECTION.md
+print_repo.sh
+README.md
+
 # Neovim/LazyVim cache and data (auto-generated)
 **/nvim/data/
 **/nvim/.tests/
@@ -27,4 +33,3 @@ Thumbs.db
 **/nvim/doc/tags
 **/nvim/tt.*
 **/nvim/foo.*
-
